@@ -66,7 +66,16 @@ func main() {
 			log.Fatal("Error", "error", err)
 		}
 		requestLine := request.RequestLine
-		fmt.Printf("Request line:\n- Method: %s\n- Target: %s\n- Version: %s", requestLine.Method, requestLine.RequestTarget, requestLine.HttpVersion)
+		headers := request.Headers
+
+		fmt.Printf("Request line:\n")
+		fmt.Printf("- Method: %s\n", requestLine.Method)
+		fmt.Printf("- Target: %s\n", requestLine.RequestTarget)
+		fmt.Printf("- Version: %s\n", requestLine.HttpVersion)
+		fmt.Printf("Headers:\n")
+		headers.ForEach(func(k, v string) {
+			fmt.Printf("- %s: %s\n", k, v)
+		})
 	}
 
 }

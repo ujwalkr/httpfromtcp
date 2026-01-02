@@ -66,6 +66,12 @@ func (h *Headers) Set(name, value string) {
 	}
 }
 
+func (h *Headers) ForEach(fe func(k, v string)) {
+	for k, v := range h.Headers {
+		fe(k, v)
+	}
+}
+
 func (h *Headers) Parse(data []byte) (int, bool, error) {
 	log.Printf("Field Line Original : %v\n", string(data))
 

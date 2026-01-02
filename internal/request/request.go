@@ -3,15 +3,17 @@ package request
 import (
 	"bytes"
 	"fmt"
+	"httpfromtcp/internal/headers"
 	"io"
 )
 
 type parseState string
 
 const (
-	StateInit  parseState = "init"
-	StateDone  parseState = "done"
-	StateError parseState = "error"
+	StateInit    parseState = "init"
+	StateDone    parseState = "done"
+	StateHeaders parseState = "headers"
+	StateError   parseState = "error"
 )
 
 type RequestLine struct {
@@ -22,11 +24,15 @@ type RequestLine struct {
 
 type Request struct {
 	RequestLine RequestLine
+	Headers     *headers.Headers
 	state       parseState
 }
 
 func newRequest() *Request {
-	return &Request{state: StateInit}
+	return &Request{
+		state:   StateInit,
+		Headers: headers.NewHeaders(),
+	}
 }
 
 var ErrorMalformedRequestLine = fmt.Errorf("malformed request-line")
@@ -83,10 +89,26 @@ outer:
 			r.RequestLine = *rl
 			read += n
 
-			r.state = StateDone
+			r.state = StateHeaders
+
+		case StateHeaders:
+			n, done, err := r.Headers.Parse(data[read:])
+			if err != nil {
+				return 0, err
+			}
+			if n == 0 {
+				break outer
+			}
+
+			if done {
+				r.state = StateDone
+			}
+			read += n
 
 		case StateDone:
 			break outer
+		default:
+			panic("Something went wrogn")
 		}
 	}
 	return read, nil
