@@ -3,7 +3,6 @@ package headers
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -54,9 +53,11 @@ func NewHeaders() *Headers {
 	}
 }
 
-func (h *Headers) Get(name string) string {
-	return h.Headers[strings.ToLower(name)]
+func (h *Headers) Get(name string) (string, bool) {
+	str, ok := h.Headers[strings.ToLower(name)]
+	return str, ok
 }
+
 func (h *Headers) Set(name, value string) {
 	name = strings.ToLower(name)
 	if v, ok := h.Headers[name]; ok {
@@ -73,8 +74,6 @@ func (h *Headers) ForEach(fe func(k, v string)) {
 }
 
 func (h *Headers) Parse(data []byte) (int, bool, error) {
-	log.Printf("Field Line Original : %v\n", string(data))
-
 	read := 0
 	done := false
 
