@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"httpfromtcp/internal/headers"
 	"io"
-	"log/slog"
 	"strconv"
 )
 
@@ -147,7 +146,6 @@ outer:
 			remaining := min(length-len(r.Body), len(currentData))
 			r.Body += string(currentData[:remaining])
 			read += remaining
-			slog.Info("State#Done", "Body:", r.Body)
 			if len(r.Body) == length {
 				r.state = StateDone
 			}
@@ -171,8 +169,6 @@ func RequestFromReader(reader io.Reader) (*Request, error) {
 	buf := make([]byte, 1024)
 	bufLen := 0
 	for !request.done() {
-		slog.Info("Read Request", "State", request.state)
-
 		n, err := reader.Read(buf[bufLen:])
 
 		if err != nil {

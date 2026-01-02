@@ -58,13 +58,14 @@ func (h *Headers) Get(name string) (string, bool) {
 	return str, ok
 }
 
+func (h *Headers) Replace(name, value string) {
+	name = strings.ToLower(name)
+	h.Headers[name] = value
+}
+
 func (h *Headers) Set(name, value string) {
 	name = strings.ToLower(name)
-	if v, ok := h.Headers[name]; ok {
-		h.Headers[name] = fmt.Sprintf("%s,%s", v, value)
-	} else {
-		h.Headers[name] = value
-	}
+	h.Headers[name] = value
 }
 
 func (h *Headers) ForEach(fe func(k, v string)) {
