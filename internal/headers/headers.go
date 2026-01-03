@@ -63,6 +63,11 @@ func (h *Headers) Replace(name, value string) {
 	h.Headers[name] = value
 }
 
+func (h *Headers) Delete(name string) {
+	name = strings.ToLower(name)
+	delete(h.Headers, name)
+}
+
 func (h *Headers) Set(name, value string) {
 	name = strings.ToLower(name)
 	h.Headers[name] = value
